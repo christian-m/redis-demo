@@ -23,20 +23,21 @@ import java.util.StringTokenizer;
  */
 public class RedisConnector {
 
-    private final static Logger LOG = Logger.getLogger(RedisConnector.class.getSimpleName());
+    private static final Logger LOG = Logger.getLogger(RedisConnector.class.getSimpleName());
 
-    public JedisPool pool;
+    private JedisPool pool;
 
-    private final static String KEY_PREFIX = "acd";
-    private final static String KEY_DOCUMENT_ID = KEY_PREFIX + ".nextid";
-    private final static String KEY_DOCUMENTS = KEY_PREFIX + ".dcs";
-    private final static String KEY_TERMS_BASE = KEY_PREFIX + ".trm";
+    private static final String KEY_PREFIX = "acd";
+    private static final String KEY_DOCUMENT_ID = KEY_PREFIX + ".nextid";
+    private static final String KEY_DOCUMENTS = KEY_PREFIX + ".dcs";
+    private static final String KEY_TERMS_BASE = KEY_PREFIX + ".trm";
 
-    private final static int DEFAULT_PORT = 6379;
-    private final static String DEFAULT_HOST = "localhost";
+    private static final int DEFAULT_PORT = 6379;
+    private static final String DEFAULT_HOST = "localhost";
+    private static final int TIMEOUT = 5000;
 
     public RedisConnector() {
-        pool = new JedisPool(new JedisPoolConfig(), DEFAULT_HOST, DEFAULT_PORT, 5000);
+        pool = new JedisPool(new JedisPoolConfig(), DEFAULT_HOST, DEFAULT_PORT, TIMEOUT);
     }
 
     public void selectDB(Jedis jedis, int index) {
@@ -55,6 +56,9 @@ public class RedisConnector {
      * Jeder so erzeugte Term wird als eigenes ZSET in Redis gespeichert, dabei ist der
      * Score Wert derzeit nicht verwendet. Es wird also nur die Eigenschaft der ZSETs
      * ausgenutzt, intern alphabetisch zu sortieren.
+     *
+     * @param jedis     Connection
+     * @param inputFile Datei aus der gelesen werden soll
      */
     public void fillData(Jedis jedis, String inputFile) {
         if (!jedis.exists(KEY_DOCUMENTS)) {
@@ -107,6 +111,8 @@ public class RedisConnector {
 
     /**
      * Datenstrukturen im Redis löschen
+     *
+     * @param jedis Connector
      */
     public void clean(Jedis jedis) {
         if (LOG.isDebugEnabled()) {

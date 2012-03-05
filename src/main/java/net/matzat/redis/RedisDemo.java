@@ -17,14 +17,17 @@ import java.util.List;
  */
 public class RedisDemo {
 
-    private final static Logger LOG = Logger.getLogger(RedisDemo.class.getSimpleName());
+    private static final Logger LOG = Logger.getLogger(RedisDemo.class.getSimpleName());
+
+    // Public Constructor deaktivieren
+    private RedisDemo() {}
 
     /**
      * Der Anwendung können zwei Parameter in beliebiger Reihenfolge übergeben werden:
      * - "clean" um bestehende Daten vor dem Import zu löschen
      * - Ein Dateiname, dessen Zeilen als Werte in die Redis-DB importiert werden sollen
      * 
-     * @param args
+     * @param args Befehlszeilenparameter
      */
     public static void main(String... args) {
         RedisDemo redisDemo = new RedisDemo();
