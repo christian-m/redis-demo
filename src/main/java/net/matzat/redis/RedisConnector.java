@@ -32,8 +32,11 @@ public class RedisConnector {
     private final static String KEY_DOCUMENTS = KEY_PREFIX + ".dcs";
     private final static String KEY_TERMS_BASE = KEY_PREFIX + ".trm";
 
+    private final static int DEFAULT_PORT = 6379;
+    private final static String DEFAULT_HOST = "localhost";
+
     public RedisConnector() {
-        pool = new JedisPool(new JedisPoolConfig(), "localhost");
+        pool = new JedisPool(new JedisPoolConfig(), DEFAULT_HOST, DEFAULT_PORT, 5000);
     }
 
     public void selectDB(Jedis jedis, int index) {
@@ -109,8 +112,10 @@ public class RedisConnector {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Cleanup Redis-DB");
         }
-        // geht eigentlich schneller, führt aber zu einer SocketTimeoutException
+        // geht eigentlich schneller, löscht aber die komplette Redis-DB (die aktuell selektierte)
         // jedis.flushDB();
+
+        // löscht nur die durch die Demo angelegten Datenstrukturen
         jedis.del(KEY_DOCUMENTS);
         jedis.del(KEY_DOCUMENT_ID);
         Set<String> keys = jedis.keys(String.format("%s.*", KEY_TERMS_BASE));
